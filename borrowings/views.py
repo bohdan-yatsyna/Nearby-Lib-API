@@ -98,3 +98,6 @@ class BorrowingViewSet(
 
     def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         return super().list(self, request, *args, **kwargs)
+
+    def perform_create(self, serializer: Serializer) -> None:
+        serializer.save(user_id=self.request.user)
