@@ -2,7 +2,6 @@ from rest_framework import mixins, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from books.permissions import IsAdminOrIfUserReadOnly
 from borrowings.models import Borrowing
 from borrowings.serializers import (
     BorrowingListSerializer,
