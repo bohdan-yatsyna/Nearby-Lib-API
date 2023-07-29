@@ -1,11 +1,14 @@
 from datetime import datetime
+from typing import Type
 
 from django.db import transaction
+from django.db.models import QuerySet
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.serializers import Serializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from books.models import Book
@@ -28,7 +31,7 @@ class BorrowingViewSet(
     permission_classes = (IsAuthenticated,)
     serializer_class = CreateBorrowingSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[Borrowing]:
         user = self.request.user
         queryset = self.queryset
 
@@ -48,7 +51,7 @@ class BorrowingViewSet(
 
         return queryset
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> Type[Serializer]:
 
         if self.action == "list":
             return BorrowingListSerializer
@@ -64,7 +67,7 @@ class BorrowingViewSet(
         url_path="return",
         permission_classes=[IsAdminUser],
     )
-    def return_book(self, request, pk=None):
+    def return_book(self, request) -> Response:
         """Endpoint for borrowing returning"""
 
         with transaction.atomic():
