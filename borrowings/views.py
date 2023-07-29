@@ -15,6 +15,7 @@ from borrowings.models import Borrowing
 from borrowings.serializers import (
     BorrowingListSerializer,
     BorrowingDetailSerializer,
+    BorrowingReturnSerializer,
     CreateBorrowingSerializer,
 )
 
@@ -57,6 +58,9 @@ class BorrowingViewSet(
 
         if self.action == "retrieve":
             return BorrowingDetailSerializer
+
+        if self.action == "return_book":
+            return BorrowingReturnSerializer
 
         return CreateBorrowingSerializer
 
