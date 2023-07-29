@@ -19,7 +19,7 @@ class BorrowingViewSet(
 ):
     queryset = Borrowing.objects.all()
     authentication_classes = (JWTAuthentication,)
-    permission_classes = (IsAuthenticated, IsAdminOrIfUserReadOnly)
+    permission_classes = (IsAuthenticated,)
     serializer_class = CreateBorrowingSerializer
 
     def get_queryset(self):
