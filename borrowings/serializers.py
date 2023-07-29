@@ -59,3 +59,10 @@ class CreateBorrowingSerializer(serializers.ModelSerializer):
             )
 
         return data
+
+
+class BorrowingReturnSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Borrowing
+        fields = ("id", "actual_return_date")
