@@ -8,6 +8,7 @@ from notifications.notifications_bot import send_message
 
 @shared_task
 def check_overdue_borrowings_with_notification() -> None:
+
     today = datetime.date.today()
     overdue_borrowings = Borrowing.objects.filter(
         actual_return_date__isnull=True,
