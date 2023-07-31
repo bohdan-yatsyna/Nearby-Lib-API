@@ -2,6 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from borrowings.models import Borrowing
+from notifications.notifications_bot import send_borrowing_create_notification
 
 
 class BorrowingListSerializer(serializers.ModelSerializer):
@@ -39,6 +40,7 @@ class CreateBorrowingSerializer(serializers.ModelSerializer):
         model = Borrowing
         fields = (
             "book",
+            "user",
             "expected_return_date",
         )
 
@@ -48,7 +50,14 @@ class CreateBorrowingSerializer(serializers.ModelSerializer):
         book.inventory -= 1
         book.save()
 
-        return super().create(validated_data)
+        borrowing = Borrowing.objects.create(**validated_data)
+
+        send_borrowing_create_notification(
+            user=validated_data["user"],
+            borrowing=borrowing
+        )
+
+        return borrowing
 
     def validate(self, data):
         book = data.get("book")

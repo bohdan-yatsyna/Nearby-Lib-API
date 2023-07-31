@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Type, Any
 
 from django.db import transaction
 from django.db.models import QuerySet
@@ -6,6 +6,7 @@ from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -94,3 +95,9 @@ class BorrowingViewSet(
             return Response(
                 {"details": "It is impossible to return borrowed book twice"}
             )
+
+    def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        return super().list(self, request, *args, **kwargs)
+
+    def perform_create(self, serializer: Serializer) -> None:
+        serializer.save(user_id=self.request.user)
