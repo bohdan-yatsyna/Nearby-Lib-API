@@ -22,7 +22,10 @@ def send_borrowing_create_notification(
         user: User,
         borrowing: Borrowing
 ) -> None:
-    """Sends a message via Telegram bot to admin user about creating a new borrowing"""
+    """
+    Sends a message via Telegram bot to admin user
+    about creating a new borrowing
+    """
 
     message = (
         f"New borrowing is created by user:"
