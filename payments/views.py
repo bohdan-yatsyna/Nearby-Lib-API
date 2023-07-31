@@ -16,7 +16,7 @@ class PaymentViewSet(
     mixins.ListModelMixin,
     GenericViewSet
 ):
-    queryset = Payment.objects.all()
+    queryset = Payment.objects.select_related("borrowing_id")
     serializer_class = PaymentSerializer
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
