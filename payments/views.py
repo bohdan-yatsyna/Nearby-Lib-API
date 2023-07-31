@@ -7,6 +7,7 @@ from rest_framework.serializers import Serializer
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from library_app.pagination import Pagination
 from payments.models import Payment
 from payments.serializers import PaymentSerializer, PaymentDetailSerializer
 
@@ -18,6 +19,7 @@ class PaymentViewSet(
 ):
     queryset = Payment.objects.select_related("borrowing_id")
     serializer_class = PaymentSerializer
+    pagination_class = Pagination
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
 

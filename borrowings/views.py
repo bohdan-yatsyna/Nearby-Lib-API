@@ -19,6 +19,7 @@ from borrowings.serializers import (
     BorrowingReturnSerializer,
     CreateBorrowingSerializer,
 )
+from library_app.pagination import Pagination
 
 
 class BorrowingViewSet(
@@ -28,6 +29,7 @@ class BorrowingViewSet(
     viewsets.GenericViewSet
 ):
     queryset = Borrowing.objects.all()
+    pagination_class = Pagination
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = CreateBorrowingSerializer
