@@ -21,8 +21,9 @@ def check_overdue_borrowings_with_notification() -> None:
         for borrowing in overdue_borrowings:
             message = (
                 f"User {borrowing.user.full_name}\n"
-                f"Book: {borrowing.book.title}\n"
-                f"Expected return date was: {borrowing.expected_return_date}\n"
+                f"Book: {borrowing.book.title}, borrowing ID:{borrowing.id}\n"
+                f"Expected return date was: "
+                f"{borrowing.expected_return_date}\n"
             )
             send_message(message)
 
