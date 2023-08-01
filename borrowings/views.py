@@ -2,6 +2,11 @@ from typing import Type, Any
 
 from django.db import transaction
 from django.db.models import QuerySet
+from drf_spectacular.utils import (
+    extend_schema,
+    extend_schema_view,
+    OpenApiParameter,
+)
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -21,6 +26,25 @@ from library_app.pagination import Pagination
 from notifications.notifications_bot import send_borrowing_return_notification
 
 
+# Only for documentation purposes (Swagger)
+@extend_schema_view(
+    list=extend_schema(
+        description=(
+            "Endpoint with list of borrowings. "
+            "For standard users only their borrowings, "
+            "for admin user all the borrowings in the system."
+        )
+    ),
+    create=extend_schema(
+        description=(
+            "Endpoint for creating borrowings, "
+            "for authenticated users only"
+        )
+    ),
+    retrieve=extend_schema(
+        description="Endpoint showing specific borrowing by it id"
+    ),
+)
 class BorrowingViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
@@ -34,19 +58,18 @@ class BorrowingViewSet(
     serializer_class = CreateBorrowingSerializer
 
     def get_queryset(self) -> QuerySet[Borrowing]:
-        user = self.request.user
         queryset = self.queryset
+        user = self.request.user
+        is_active = self.request.query_params.get("is_active")
 
-        if user.is_staff is False:
-            queryset.filter(user=user)
+        if not user.is_staff:
+            queryset = queryset.filter(user=user)
 
         if user.is_staff:
-            user = self.request.query_params.get("user")
+            user_id = self.request.query_params.get("user_id")
 
-            if user:
-                queryset = queryset.filter(user=user)
-
-        is_active = self.request.query_params.get("is_active")
+            if user_id:
+                queryset = queryset.filter(user__id=user_id)
 
         if is_active:
             queryset = queryset.filter(actual_return_date__isnull=True)
@@ -87,6 +110,29 @@ class BorrowingViewSet(
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+    # Only for documentation purposes (Swagger)
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="user_id",
+                description=(
+                    "Parameter for filtering according to user_id, "
+                    "for admin users only (ex. '?user_id=1)."
+                ),
+                required=False,
+                type=int,
+            ),
+            OpenApiParameter(
+                name="is_active",
+                description=(
+                    "Filtering according to active borrowings "
+                    "(ex. ?is_active=True)."
+                ),
+                required=False,
+                type=str,
+            ),
+        ],
+    )
     def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         return super().list(self, request, *args, **kwargs)
 
