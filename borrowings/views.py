@@ -28,7 +28,7 @@ class BorrowingViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet
 ):
-    queryset = Borrowing.objects.all()
+    queryset = Borrowing.objects.select_related("book", "user")
     pagination_class = Pagination
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -73,11 +73,11 @@ class BorrowingViewSet(
         url_path="return",
         permission_classes=[IsAdminUser],
     )
-    def return_book(self, request) -> Response:
+    def return_book(self, request, pk=None) -> Response:
         """Endpoint for borrowing returning"""
 
         with transaction.atomic():
-            borrowing = self.get_object()
+            borrowing = Borrowing.objects.get(pk=pk)
 
             if not borrowing.actual_return_date:
                 serializer = self.get_serializer(borrowing, data=request.data)
@@ -87,7 +87,7 @@ class BorrowingViewSet(
                 )
                 borrowing.save()
 
-                book_id = borrowing.book_id
+                book_id = borrowing.book
                 book = get_object_or_404(Book, id=book_id)
                 book.inventory += 1
                 book.save()
