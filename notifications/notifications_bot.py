@@ -5,13 +5,14 @@ from dotenv import load_dotenv
 from typing import Any
 
 from borrowings.models import Borrowing
+from library_app import settings
 from users.models import User
 
 load_dotenv()
 
-token = os.getenv("TELEGRAM_BOT_TOKEN")
+token = settings.TELEGRAM_BOT_TOKEN
 bot = telebot.TeleBot(token=token)
-chat_id = os.getenv("TELEGRAM_CHAT_ID")
+chat_id = settings.TELEGRAM_CHAT_ID
 
 
 def send_message(message: str) -> Any:
