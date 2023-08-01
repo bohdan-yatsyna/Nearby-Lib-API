@@ -11,7 +11,7 @@ load_dotenv()
 
 token = os.getenv("TELEGRAM_BOT_TOKEN")
 bot = telebot.TeleBot(token=token)
-chat_id = os.getenv("BOT_CHAT_ID")
+chat_id = os.getenv("TELEGRAM_CHAT_ID")
 
 
 def send_message(message: str) -> Any:
