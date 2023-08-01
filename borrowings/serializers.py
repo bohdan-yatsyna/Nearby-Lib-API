@@ -45,6 +45,7 @@ class CreateBorrowingSerializer(serializers.ModelSerializer):
             "user",
             "expected_return_date",
         )
+        read_only_fields = ("id", "actual_return_date", "user")
 
     @transaction.atomic()
     def create(self, validated_data):
