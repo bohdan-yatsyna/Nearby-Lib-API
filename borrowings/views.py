@@ -2,7 +2,11 @@ from typing import Type, Any
 
 from django.db import transaction
 from django.db.models import QuerySet
-from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiParameter
+from drf_spectacular.utils import (
+    extend_schema,
+    extend_schema_view,
+    OpenApiParameter,
+)
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -26,15 +30,15 @@ from notifications.notifications_bot import send_borrowing_return_notification
 @extend_schema_view(
     list=extend_schema(
         description=(
-                "Endpoint with list of borrowings. "
-                "For standard users only their borrowings, "
-                "for admin user all the borrowings in the system."
+            "Endpoint with list of borrowings. "
+            "For standard users only their borrowings, "
+            "for admin user all the borrowings in the system."
         )
     ),
     create=extend_schema(
         description=(
-                "Endpoint for creating borrowings, "
-                "for authenticated users only"
+            "Endpoint for creating borrowings, "
+            "for authenticated users only"
         )
     ),
     retrieve=extend_schema(
