@@ -34,20 +34,23 @@ class BorrowingViewSet(
     serializer_class = CreateBorrowingSerializer
 
     def get_queryset(self) -> QuerySet[Borrowing]:
+        queryset = self.queryset
         user = self.request.user
-        user_id = self.request.query_params.get("user_id")
         is_active = self.request.query_params.get("is_active")
 
-        if user_id:
-            self.queryset = self.queryset.filter(user__id=user_id)
-
-        if is_active:
-            self.queryset = self.queryset.filter(actual_return__isnull=True)
+        if not user.is_staff:
+            queryset = queryset.filter(user=user)
 
         if user.is_staff:
-            return self.queryset
+            user_id = self.request.query_params.get("user_id")
 
-        return self.queryset.filter(user=user)
+            if user_id:
+                queryset = queryset.filter(user__id=user_id)
+
+        if is_active:
+            queryset = queryset.filter(actual_return_date__isnull=True)
+
+        return queryset
 
     def get_serializer_class(self) -> Type[Serializer]:
 
