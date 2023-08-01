@@ -1,6 +1,7 @@
 from typing import Type
 
 from django.db.models import QuerySet
+from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.serializers import Serializer
@@ -12,6 +13,19 @@ from payments.models import Payment
 from payments.serializers import PaymentSerializer, PaymentDetailSerializer
 
 
+# Only for documentation purposes (Swagger)
+@extend_schema_view(
+    list=extend_schema(
+        description=(
+            "Endpoint with list of payment. "
+            "For standard users only their borrowings, "
+            "for admin users all the borrowings in the system."
+        )
+    ),
+    retrieve=extend_schema(
+        description="Endpoint showing specific payment by it id"
+    ),
+)
 class PaymentViewSet(
     mixins.RetrieveModelMixin,
     mixins.ListModelMixin,
