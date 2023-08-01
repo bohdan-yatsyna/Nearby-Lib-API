@@ -13,10 +13,10 @@ class Borrowing(models.Model):
     expected_return_date = models.DateField(
         validators=[
             MinValueValidator(limit_value=date.today() + timedelta(days=1)),
-            MaxValueValidator(limit_value=date.today() + timedelta(days=30)),
+            MaxValueValidator(limit_value=date.today() + timedelta(days=180)),
         ],
         help_text=_(
-            "Expected return date must be in range from 1 to 30 days "
+            "Expected return date must be in range from 1 to 180 days "
             "after the borrowing date."
         ),
         blank=False,
@@ -29,6 +29,8 @@ class Borrowing(models.Model):
         help_text=_(
             "Actual returning date can not be earlier the borrowing date."
         ),
+        blank=True,
+        null=True,
     )
     book = models.ForeignKey(
         to=Book,

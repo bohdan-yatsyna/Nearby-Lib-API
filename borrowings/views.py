@@ -4,14 +4,12 @@ from django.db import transaction
 from django.db.models import QuerySet
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
-from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from books.models import Book
 from borrowings.models import Borrowing
 from borrowings.serializers import (
     BorrowingListSerializer,
@@ -19,6 +17,7 @@ from borrowings.serializers import (
     BorrowingReturnSerializer,
     CreateBorrowingSerializer,
 )
+from library_app.pagination import Pagination
 
 
 class BorrowingViewSet(
@@ -27,7 +26,8 @@ class BorrowingViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet
 ):
-    queryset = Borrowing.objects.all()
+    queryset = Borrowing.objects.select_related("book", "user")
+    pagination_class = Pagination
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = CreateBorrowingSerializer
@@ -40,10 +40,10 @@ class BorrowingViewSet(
             queryset.filter(user=user)
 
         if user.is_staff:
-            user_id = self.request.query_params.get("user_id")
+            user = self.request.query_params.get("user")
 
-            if user_id:
-                queryset = queryset.filter(user_id=user_id)
+            if user:
+                queryset = queryset.filter(user=user)
 
         is_active = self.request.query_params.get("is_active")
 
@@ -71,33 +71,19 @@ class BorrowingViewSet(
         url_path="return",
         permission_classes=[IsAdminUser],
     )
-    def return_book(self, request) -> Response:
+    def return_book(self, request, pk=None) -> Response:
         """Endpoint for borrowing returning"""
 
         with transaction.atomic():
             borrowing = self.get_object()
+            serializer = self.get_serializer(borrowing, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
-            if not borrowing.actual_return_date:
-                serializer = self.get_serializer(borrowing, data=request.data)
-                serializer.is_valid(raise_exception=True)
-                borrowing.actual_return_date = serializer.validated_data.get(
-                    "actual_return_date"
-                )
-                borrowing.save()
-
-                book_id = borrowing.book_id
-                book = get_object_or_404(Book, id=book_id)
-                book.inventory += 1
-                book.save()
-
-                return Response(serializer.data, status=status.HTTP_200_OK)
-
-            return Response(
-                {"details": "It is impossible to return borrowed book twice"}
-            )
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         return super().list(self, request, *args, **kwargs)
 
     def perform_create(self, serializer: Serializer) -> None:
-        serializer.save(user_id=self.request.user)
+        serializer.save(user=self.request.user)
