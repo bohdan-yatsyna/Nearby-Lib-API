@@ -34,7 +34,7 @@ class PaymentViewSet(
         user = self.request.user
         queryset = self.queryset
 
-        if user.is_staff is False:
-            queryset.filter(user=user)
+        if not user.is_staff:
+            queryset.filter(borrowing_id__user=user)
 
         return queryset
