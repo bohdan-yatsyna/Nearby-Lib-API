@@ -42,10 +42,10 @@ class BorrowingViewSet(
             queryset.filter(user=user)
 
         if user.is_staff:
-            user_id = self.request.query_params.get("user_id")
+            user = self.request.query_params.get("user")
 
-            if user_id:
-                queryset = queryset.filter(user_id=user_id)
+            if user:
+                queryset = queryset.filter(user=user)
 
         is_active = self.request.query_params.get("is_active")
 
@@ -77,29 +77,15 @@ class BorrowingViewSet(
         """Endpoint for borrowing returning"""
 
         with transaction.atomic():
-            borrowing = Borrowing.objects.get(pk=pk)
+            borrowing = self.get_object()
+            serializer = self.get_serializer(borrowing, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
 
-            if not borrowing.actual_return_date:
-                serializer = self.get_serializer(borrowing, data=request.data)
-                serializer.is_valid(raise_exception=True)
-                borrowing.actual_return_date = serializer.validated_data.get(
-                    "actual_return_date"
-                )
-                borrowing.save()
-
-                book_id = borrowing.book
-                book = get_object_or_404(Book, id=book_id)
-                book.inventory += 1
-                book.save()
-
-                return Response(serializer.data, status=status.HTTP_200_OK)
-
-            return Response(
-                {"details": "It is impossible to return borrowed book twice"}
-            )
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         return super().list(self, request, *args, **kwargs)
 
     def perform_create(self, serializer: Serializer) -> None:
-        serializer.save(user_id=self.request.user)
+        serializer.save(user=self.request.user)
