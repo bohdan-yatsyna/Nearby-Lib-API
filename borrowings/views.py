@@ -4,14 +4,12 @@ from django.db import transaction
 from django.db.models import QuerySet
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
-from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from books.models import Book
 from borrowings.models import Borrowing
 from borrowings.serializers import (
     BorrowingListSerializer,
