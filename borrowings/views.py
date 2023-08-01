@@ -18,6 +18,7 @@ from borrowings.serializers import (
     CreateBorrowingSerializer,
 )
 from library_app.pagination import Pagination
+from notifications.notifications_bot import send_borrowing_return_notification
 
 
 class BorrowingViewSet(
@@ -79,6 +80,10 @@ class BorrowingViewSet(
             serializer = self.get_serializer(borrowing, data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
+
+            send_borrowing_return_notification(
+                borrowing=borrowing
+            )
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 

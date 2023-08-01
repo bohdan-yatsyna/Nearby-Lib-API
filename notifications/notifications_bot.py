@@ -34,3 +34,17 @@ def send_borrowing_create_notification(
         f"with expected return date: {borrowing.expected_return_date}."
     )
     send_message(message)
+
+
+def send_borrowing_return_notification(
+        borrowing: Borrowing
+) -> None:
+    """
+    Sends a message via Telegram bot to admin user
+    about borrowing return
+    """
+
+    message = (
+        f"Book with title: {borrowing.book.title}, is returned"
+    )
+    send_message(message)
