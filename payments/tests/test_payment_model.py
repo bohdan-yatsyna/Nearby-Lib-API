@@ -1,9 +1,12 @@
-from django.test import TestCase
+import datetime
+
+from decimal import Decimal
 from django.contrib.auth import get_user_model
+from django.test import TestCase
+
 from books.models import Book
 from borrowings.models import Borrowing
 from payments.models import Payment
-from decimal import Decimal
 
 
 class PaymentModelTest(TestCase):
@@ -21,7 +24,9 @@ class PaymentModelTest(TestCase):
         )
 
         self.borrowing = Borrowing.objects.create(
-            expected_return_date="2023-10-25",
+            expected_return_date=(
+                datetime.date.today() + datetime.timedelta(days=15)
+            ),
             book=self.book,
             user=self.user,
         )
