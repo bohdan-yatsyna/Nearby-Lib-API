@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from books.models import Book
 from borrowings.models import Borrowing
-from decimal import Decimal
 
 
 class BorrowingModelTest(TestCase):
