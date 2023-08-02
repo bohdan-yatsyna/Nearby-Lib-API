@@ -5,16 +5,16 @@ from borrowings.models import Borrowing
 
 class Payment(models.Model):
 
-    class StatusChoice(models.TextChoices):
+    class StatusChoices(models.TextChoices):
         PENDING = "Pending"
         PAID = "Paid"
 
-    class TypeStatus(models.TextChoices):
+    class TypeChoices(models.TextChoices):
         PAYMENT = "Payment"
         FINE = "Fine"
 
-    status = models.CharField(max_length=7, choices=StatusChoice.choices)
-    type = models.CharField(max_length=7, choices=TypeStatus.choices)
+    status = models.CharField(max_length=7, choices=StatusChoices.choices)
+    type = models.CharField(max_length=7, choices=TypeChoices.choices)
     borrowing_id = models.ForeignKey(
         to=Borrowing,
         on_delete=models.CASCADE,
