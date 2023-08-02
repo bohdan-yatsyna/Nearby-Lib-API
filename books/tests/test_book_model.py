@@ -8,7 +8,7 @@ class BookModelTest(TestCase):
         book = Book.objects.create(
             title="Shantaram",
             author="Gregory David Roberts",
-            cover="Soft",
+            cover=Book.CoverChoices.SOFT,
             inventory=7,
             daily_fee=0.12,
         )
