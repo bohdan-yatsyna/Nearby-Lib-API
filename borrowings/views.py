@@ -52,7 +52,6 @@ class BorrowingViewSet(
     viewsets.GenericViewSet
 ):
     queryset = Borrowing.objects.select_related("book", "user")
-    pagination_class = Pagination
     authentication_classes = (JWTAuthentication,)
     permission_classes = (IsAuthenticated,)
     serializer_class = CreateBorrowingSerializer
