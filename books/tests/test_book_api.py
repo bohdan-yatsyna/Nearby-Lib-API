@@ -49,7 +49,7 @@ class UnauthenticatedBookApiTests(TestCase):
     def setUp(self) -> None:
         self.client = APIClient()
 
-    def test_auth_not_required_for_list(self):
+    def test_auth_not_required_for_book_list(self):
         response = self.client.get(BOOK_LIST_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
