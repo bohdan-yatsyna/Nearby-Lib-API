@@ -71,8 +71,8 @@ docker-compose up --build
 
 # 🕶 DEMO
 ### Admin pannel:
-![sample_ADMIN_PANNEL.PNG](samples/sample_ADMIN_PANNEL.PNG)
+![sample_ADMIN_PANNEL](samples/sample_ADMIN_PANNEL.PNG)
 
 ### Documentation with all endpoints:
-![sample_DOCUMENTATION.png](samples/sample_DOCUMENTATION.png)
+![sample_DOCUMENTATION](samples/sample_DOCUMENTATION.PNG)
 
