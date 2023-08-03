@@ -12,7 +12,7 @@ def check_overdue_borrowings_with_notification() -> None:
     today = datetime.date.today()
     overdue_borrowings = Borrowing.objects.filter(
         actual_return_date__isnull=True,
-        expected_return_date_lte=(today + datetime.timedelta(days=1)),
+        expected_return_date__lte=(today + datetime.timedelta(days=1)),
     )
 
     if overdue_borrowings:
