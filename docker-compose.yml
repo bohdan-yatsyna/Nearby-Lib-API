@@ -8,6 +8,7 @@ services:
           - "5433:5432"
       env_file:
            - .env
+
   app:
     build: .
     command:
@@ -56,5 +57,21 @@ services:
       - redis
       - db
     restart: on-failure
+    env_file:
+      - .env
+
+  flower:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5555:5555"
+    command: >
+      sh -c "python manage.py wait_for_db &&
+            celery -A library_app flower --address=0.0.0.0"
+    depends_on:
+      - celery
+      - celery-beat
+      - db
     env_file:
       - .env
