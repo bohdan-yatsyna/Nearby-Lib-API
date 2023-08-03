@@ -1,5 +1,6 @@
 import datetime
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -11,6 +12,7 @@ from books.models import Book
 from books.serializers import BookSerializer
 from borrowings.models import Borrowing
 from borrowings.serializers import BorrowingListSerializer
+
 
 BORROWING_LIST_URL = reverse("borrowings:borrowing-list")
 
@@ -130,3 +132,11 @@ class AuthenticatedUsersBorrowingApiTests(TestCase):
 
         self.book_1.refresh_from_db()
         self.assertEqual(self.book_1.inventory, 2)
+
+    @staticmethod
+    def test_task_borrowings_overdue_notification():
+        with patch(
+            "borrowings.tasks.check_overdue_borrowings_with_notification"
+        ) as mock_overdue:
+            mock_overdue()
+            mock_overdue.assert_called_once_with()
