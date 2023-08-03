@@ -22,6 +22,7 @@ drf-spectacular==0.26.4
 flake8==6.1.0
 flake8-quotes==3.3.2
 flake8-variables-names==0.0.6
+flower==2.0.0
 humanize==4.7.0
 idna==3.4
 inflection==0.5.1
