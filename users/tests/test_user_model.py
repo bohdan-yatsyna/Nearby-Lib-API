@@ -16,6 +16,8 @@ class UserModelTest(TestCase):
         self.client.force_authenticate(self.user)
 
     def test_user_str_representation(self):
-        expected_str_representation = f"{self.user.email} ({self.user.get_full_name()})"
+        expected_str_representation = (
+            f"{self.user.email} ({self.user.get_full_name()})"
+        )
 
         self.assertEqual(str(self.user), expected_str_representation)
